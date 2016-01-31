@@ -2,9 +2,41 @@ import wx;
 import os;
 import subprocess;
 import re;
+import pygtk;
+pygtk.require("2.0")
+import gtk;
 
+clipboard = gtk.clipboard_get()
 processList = ["steam", "chrome"]
 killList = ["steam", "chrome", "dota2"]
+colorList = [
+    "Red",
+    "Orange",
+    "Yellow",
+    "Green",
+    "Blue",
+    "Purple",
+    "Pink",
+    "Rainbow"
+]
+colorDict = {
+    "Pink" : 0x0011,
+    "Red" : 0x0012,
+    "Orange": 0x0013,
+    "Purple": 0x0016,
+    "Blue" : 0x0019,
+    "Green" : 0x000C,
+    "Yellow" : 0x001D
+}
+rainbow = [
+    chr(0x0012),
+    chr(0x0013),
+    chr(0x001D),
+    chr(0x000C),
+    chr(0x0019),
+    chr(0x0016),
+    chr(0x0011)
+]
 
 
 class ProcessHandler:
@@ -22,7 +54,7 @@ class FrameHandler(wx.Frame):
         super(FrameHandler, self).__init__(
             parent=parent,
             title=title,
-            size=(450, 450))
+            size=(450, 550))
         self.processHandler = processHandler
         self.panel = wx.Panel(self, 2)
         self.steamButton = wx.Button(
@@ -76,6 +108,28 @@ class FrameHandler(wx.Frame):
             (250,315),
             (150,50)
         )
+        self.colorChanger = wx.ComboBox(
+            self,
+            10,
+            "Rainbow",
+            (50, 400),
+            (150,50),
+            colorList
+        )
+        self.colorText = wx.TextCtrl(
+            self,
+            11,
+            "Your Text",
+            (250, 400),
+            (150, 50)
+        )
+        self.colorButton = wx.Button(
+            self,
+            12,
+            "Copy Text",
+            (150,450),
+            (150,50)
+        )
         self.Show()
         self.initBinds()
 
@@ -100,6 +154,11 @@ class FrameHandler(wx.Frame):
             self.pkill,
             self.killButton
         )
+        self.Bind(
+            wx.EVT_BUTTON,
+            self.coloredText,
+            self.colorButton
+        )
 
     def pkill(self, event):
         application = self.killApp.GetValue()
@@ -107,6 +166,27 @@ class FrameHandler(wx.Frame):
             self.errorBox("No application given to kill.")
             return
         os.popen("pkill -9 "+application)
+
+    def coloredText(self, event):
+        color = self.colorChanger.GetValue()
+        if(color != "Rainbow"):
+            hexCharacter = chr(colorDict[color])
+            clipboard.set_text(hexCharacter+self.colorText.GetValue())
+        else:
+            coloredString = ""
+            stringList = self.colorText.GetValue().split()
+            spaceCounter = 0
+            for i in range(0,len(stringList)):
+                string = stringList[i]
+                rainbowNumber = i - spaceCounter
+                rainbowCharacter = rainbow[rainbowNumber % 7]
+                coloredString = (
+                    coloredString
+                    + rainbowCharacter
+                    + string
+                    + " ")
+            clipboard.set_text(coloredString)
+        clipboard.store()
 
     def changeSensitivity(self, event):
         p = re.compile(ur'\d+')

@@ -1,3 +1,3 @@
-wxPython panel made for Warwick University's Dota Society.
+##wxPython panel made for Warwick University's Dota Society.
 
 
