@@ -17,7 +17,8 @@ colorList = [
     "Blue",
     "Purple",
     "Pink",
-    "Rainbow"
+    "Rainbow-W",
+    "Rainbow-L"
 ]
 colorDict = {
     "Pink" : 0x0011,
@@ -111,7 +112,7 @@ class FrameHandler(wx.Frame):
         self.colorChanger = wx.ComboBox(
             self,
             10,
-            "Rainbow",
+            "Rainbow-L",
             (50, 400),
             (150,50),
             colorList
@@ -169,23 +170,22 @@ class FrameHandler(wx.Frame):
 
     def coloredText(self, event):
         color = self.colorChanger.GetValue()
-        if(color != "Rainbow"):
+        if(color != "Rainbow-W" and color != "Rainbow-L"):
             hexCharacter = chr(colorDict[color])
             clipboard.set_text(hexCharacter+self.colorText.GetValue())
-        else:
+        elif(color == "Rainbow-W"):
             coloredString = ""
             stringList = self.colorText.GetValue().split()
-            spaceCounter = 0
             for i in range(0,len(stringList)):
                 string = stringList[i]
-                rainbowNumber = i - spaceCounter
+                rainbowNumber = i
                 rainbowCharacter = rainbow[rainbowNumber % 7]
-                coloredString = (
-                    coloredString
-                    + rainbowCharacter
-                    + string
-                    + " ")
+                coloredString += rainbowCharacter + string+ " "
             clipboard.set_text(coloredString)
+        else:
+            coloredString = ""
+            stringList = list(self.colorText.GetValue())
+            clipboard.set_text(rainbowify(stringList))
         clipboard.store()
 
     def changeSensitivity(self, event):
@@ -234,7 +234,19 @@ class FrameHandler(wx.Frame):
     def runChrome(self, event):
         self.processHandler.addProcess(Execute("mchrome tmphome"), "chrome")
 
-
+def rainbowify(list):
+        coloredString = ""
+        spaceCounter = 0
+        i = 0
+        for char in list:
+            if char == " ":
+                coloredString += " "
+                continue
+            else:
+                rainbowCharacter = rainbow[i % 7]
+                coloredString += rainbowCharacter + char
+                i += 1
+        return coloredString
 
 def Execute(command):
     process = wx.Process()
