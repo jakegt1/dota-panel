@@ -134,6 +134,11 @@ class FrameHandler(wx.Frame):
         self.Show()
         self.initBinds()
 
+    def resetXInputList(self, event):
+        self.mouseComboBox.clear();
+        for mouse in getXInputList():
+            self.mouseComboBox.append(mouse)
+
     def initBinds(self):
         self.Bind(
             wx.EVT_BUTTON,
@@ -144,6 +149,11 @@ class FrameHandler(wx.Frame):
             wx.EVT_BUTTON,
             self.runChrome,
             self.chromeButton
+        )
+        self.Bind(
+            wx.EVT_COMBOBOX,
+            self.resetXInputList,
+            self.mouseComboBox
         )
         self.Bind(
             wx.EVT_BUTTON,
