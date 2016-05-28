@@ -135,9 +135,7 @@ class FrameHandler(wx.Frame):
         self.initBinds()
 
     def resetXInputList(self, event):
-        self.mouseComboBox.clear();
-        for mouse in getXInputList():
-            self.mouseComboBox.append(mouse)
+        self.mouseComboBox.SetItems(getXInputList())
 
     def initBinds(self):
         self.Bind(
