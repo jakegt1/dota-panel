@@ -4,6 +4,7 @@ import subprocess;
 import re;
 import pygtk;
 pygtk.require("2.0")
+import shutil;
 import gtk;
 
 clipboard = gtk.clipboard_get()
@@ -139,6 +140,10 @@ class FrameHandler(wx.Frame):
 
     def initBinds(self):
         self.Bind(
+            wx.EVT_CLOSE,
+            self.onClose
+        )
+        self.Bind(
             wx.EVT_BUTTON,
             self.runSteam,
             self.steamButton
@@ -220,6 +225,14 @@ class FrameHandler(wx.Frame):
         else:
             self.errorBox("Multiplier was larger than 10.")
 
+    def onClose(self, e):
+        try:
+            shutil.rmtree("/var/tmp/tmphome")
+        except OSError:
+            pass
+        os.popen("pkill gnome-session")
+        self.Destroy()
+
     def errorBox(self, message):
         dialog = wx.MessageDialog(
             self,
@@ -237,10 +250,16 @@ class FrameHandler(wx.Frame):
         return self.processHandler
 
     def runSteam(self, event):
-        self.processHandler.addProcess(Execute("steam"),"steam")
+        self.processHandler.addProcess(
+            Execute("steam"),
+            "steam"
+        )
 
     def runChrome(self, event):
-        self.processHandler.addProcess(Execute("mchrome tmphome"), "chrome")
+        self.processHandler.addProcess(
+            Execute("mchrome tmphome"),
+            "chrome"
+        )
 
 def rainbowify(list):
         coloredString = ""
