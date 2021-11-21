@@ -1,4 +1,5 @@
-import os;
+#!/usr/bin/python3
+
 import subprocess;
 import re;
 import shutil;
