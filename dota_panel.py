@@ -4,7 +4,8 @@ import subprocess;
 import re;
 import shutil;
 
-from tkinter import Tk, ttk
+from tkinter import Menu, Text, Tk, Toplevel, ttk
+from tkinter.constants import END, INSERT, RAISED
 
 processList = ["steam", "chrome"]
 kill_list = ["steam", "chrome", "dota2"]
@@ -39,8 +40,33 @@ def kill_application(frozen_apps):
     return kill_application_closure
 
 
+def about():
+    win = Toplevel()
+    win.wm_title = "About"
+
+    frame = ttk.Frame(win, padding=10)
+    frame.grid()
+
+    text = Text(frame)
+    text.grid(column=0, row=0)
+
+    text.insert(INSERT, "Hello everyone!\n")
+    text.insert(INSERT, "This was written by Jakegt1, also known as the founder of Dota Society.\n")
+    text.insert(INSERT, "It is extremely well written, and has 0 bugs.\n")
+    text.insert(INSERT, "If it does have bugs, contact me on Discord. But it doesn't.\n")
+    text.insert(END, "Have fun playing Dota!")
+
+    ttk.Button(text="Exit", command=win.destroy)
+
+
 def create_panel():
     root = Tk()
+    menu = Menu(root)
+    menu.add_command(label="About", command=about)
+    menu.add_command(label="Exit", command=exit)
+
+    root.config(menu=menu)
+
     frame = ttk.Frame(root, padding=10)
     frame.master.title("Dota Panel")
     frame.grid()
